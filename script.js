@@ -3,60 +3,34 @@ let games = [];
 async function loadGames() {
   const res = await fetch("games.json");
   games = await res.json();
-  showRandomGames();
+  showGames();
 }
 
-function showRandomGames() {
-  const content = document.getElementById("content");
-  content.innerHTML = "<h2>Featured Games</h2>";
-  
-  const shuffled = [...games].sort(() => 0.5 - Math.random());
-  const selected = shuffled.slice(0, 5);
-
-  selected.forEach(g => {
-    const btn = document.createElement("button");
-    btn.className = "gameBtn";
-    btn.textContent = g.name;
-    btn.onclick = () => playGame(g.url);
-    content.appendChild(btn);
-  });
-
-  const allBtn = document.createElement("button");
-  allBtn.className = "gameBtn";
-  allBtn.textContent = "All Games";
-  allBtn.onclick = showAllGames;
-  content.appendChild(allBtn);
-}
-
-function showAllGames() {
-  const content = document.getElementById("content");
-  content.innerHTML = "<h2>All Games</h2>";
+function showGames() {
+  const grid = document.getElementById("gameGrid");
+  grid.innerHTML = "";
   games.forEach(g => {
-    const btn = document.createElement("button");
-    btn.className = "gameBtn";
-    btn.textContent = g.name;
-    btn.onclick = () => playGame(g.url);
-    content.appendChild(btn);
+    const card = document.createElement("div");
+    card.className = "gameCard";
+    card.textContent = g.name;
+    card.onclick = () => playGame(g.url);
+    grid.appendChild(card);
   });
 }
 
 function playGame(url) {
-  document.getElementById("content").classList.add("hidden");
-  const player = document.getElementById("gamePlayer");
+  document.getElementById("gameGrid").classList.add("hidden");
+  const player = document.getElementById("player");
   player.classList.remove("hidden");
   document.getElementById("gameFrame").src = url;
 }
 
 function backToGames() {
   document.getElementById("gameFrame").src = "";
-  document.getElementById("gamePlayer").classList.add("hidden");
-  document.getElementById("content").classList.remove("hidden");
-  showAllGames();
+  document.getElementById("player").classList.add("hidden");
+  document.getElementById("gameGrid").classList.remove("hidden");
 }
 
 document.getElementById("backBtn").addEventListener("click", backToGames);
-document.getElementById("homeBtn").addEventListener("click", showRandomGames);
-document.getElementById("allGamesBtn").addEventListener("click", showAllGames);
-document.getElementById("homeTitle").addEventListener("click", showRandomGames);
 
 loadGames();
