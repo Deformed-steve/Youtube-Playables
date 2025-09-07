@@ -83,7 +83,7 @@
 
     async function loadGames() {
       try {
-        const res = await fetch("games.json");
+       const res = await fetch("./games.json"); 
         games = await res.json();
         showGames();
       } catch (err) {
