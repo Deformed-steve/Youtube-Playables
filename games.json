@@ -1,14 +1,5 @@
 [
-  {
-    "name": "Tall Man Run",
-    "url": "https://8413946450207224144.playables.usercontent.goog/v/assets/index.html#flags=%7B%22enableServiceWorker%22%3Afalse%7D&origin=https%3A%2F%2Fwww.youtube.com"
-  },
-  {
-    "name": "Attack Hole",
-    "url": "https://5419033273760513604.playables.usercontent.goog/v/assets/index.html#flags=%7B%22enableServiceWorker%22%3Afalse%7D&origin=https%3A%2F%2Fwww.youtube.com"
-  },
-  {
-    "name": "Plane evolution",
-    "url": "https://5901866747040328330.playables.usercontent.goog/v/assets/index.html#flags=%7B%22enableServiceWorker%22%3Afalse%7D&origin=https%3A%2F%2Fwww.youtube.com"
-  }
+  { "name": "Tall Man Run", "url": "https://8413946450207224144.playables.usercontent.goog/v/assets/index.html#flags=%7B%22enableServiceWorker%22%3Afalse%7D&origin=https%3A%2F%2Fwww.youtube.com" },
+  { "name": "Attack Hole", "url": "https://5419033273760513604.playables.usercontent.goog/v/assets/index.html#flags=%7B%22enableServiceWorker%22%3Afalse%7D&origin=https%3A%2F%2Fwww.youtube.com" },
+  { "name": "Plane evolution", "url": "https://5901866747040328330.playables.usercontent.goog/v/assets/index.html#flags=%7B%22enableServiceWorker%22%3Afalse%7D&origin=https%3A%2F%2Fwww.youtube.com" }
 ]
