@@ -15,22 +15,23 @@
     #gameGrid {
       padding: 20px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 20px;
     }
 
     .gameCard {
       background: #222;
-      padding: 30px 20px;
+      padding: 40px 20px;
       border-radius: 12px;
       text-align: center;
       font-size: 18px;
+      font-weight: bold;
       cursor: pointer;
       transition: transform 0.2s, background 0.2s;
     }
 
     .gameCard:hover {
-      transform: scale(1.05);
+      transform: scale(1.08);
       background: #333;
     }
 
@@ -38,8 +39,9 @@
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      display: flex;
+      display: none;
       flex-direction: column;
+      background: black;
     }
 
     #gameFrame {
@@ -49,41 +51,31 @@
       border: none;
     }
 
-    #backScreen {
+    /* Close overlay button (top-right) */
+    #closeBtn {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #backBtn {
-      background: #444;
-      color: white;
-      font-size: 20px;
-      padding: 15px 30px;
+      top: 15px;
+      right: 20px;
+      background: rgba(255,255,255,0.8);
+      color: black;
+      font-size: 16px;
+      padding: 8px 15px;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
     }
 
-    #backBtn:hover {
-      background: #666;
+    #closeBtn:hover {
+      background: white;
     }
-
-    .hidden { display: none; }
   </style>
 </head>
 <body>
   <main id="gameGrid"></main>
 
-  <div id="player" class="hidden">
+  <div id="player">
+    <button id="closeBtn">✖ Close</button>
     <iframe id="gameFrame"></iframe>
-    <div id="backScreen">
-      <button id="backBtn">Back to Games</button>
-    </div>
   </div>
 
   <script>
@@ -114,19 +106,16 @@
     }
 
     function playGame(url) {
-      document.getElementById("gameGrid").classList.add("hidden");
-      const player = document.getElementById("player");
-      player.classList.remove("hidden");
+      document.getElementById("player").style.display = "flex";
       document.getElementById("gameFrame").src = url;
     }
 
-    function backToGames() {
+    function closeGame() {
       document.getElementById("gameFrame").src = "";
-      document.getElementById("player").classList.add("hidden");
-      document.getElementById("gameGrid").classList.remove("hidden");
+      document.getElementById("player").style.display = "none";
     }
 
-    document.getElementById("backBtn").addEventListener("click", backToGames);
+    document.getElementById("closeBtn").addEventListener("click", closeGame);
 
     loadGames();
   </script>
