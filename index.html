@@ -115,7 +115,7 @@
           .filter(f => f.name.endsWith(".html"))
           .map(f => ({
             name: f.name.replace(".html", ""),
-            url: f.download_url // ✅ use download_url instead of just f.name
+            url: `https://deformed-steve.github.io/Youtube-Playables.github.io/${f.path}` // ✅ point to /assets/file.html
           }));
       } catch (e) {
         console.warn("Auto game loading failed:", e);
