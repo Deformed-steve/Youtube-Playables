@@ -104,16 +104,16 @@
 let manualGames = JSON.parse(document.getElementById("gamesData").textContent);
 let autoGames = [];
 
-// 🔥 Load ALL games from local games.json (fast)
+// 🔥 Load ALL games from local games.json (root folder) fast
 async function loadLocalGames() {
   try {
-    const res = await fetch("games.json"); // <-- root folder
+    const res = await fetch("games.json"); // root folder
     if (!res.ok) throw new Error("games.json not found");
     const files = await res.json();
 
     autoGames = files.map(name => ({
       name: name.replace(".html", ""),
-      url: name // <-- root folder
+      url: name // root folder path
     }));
   } catch (e) {
     console.warn("Failed to load local games.json:", e);
