@@ -104,7 +104,12 @@
     let manualGames = JSON.parse(document.getElementById("gamesData").textContent);
     let autoGames = [];
 
-// 🔥 Load ALL .html files from the repo, handling GitHub API pagination
+<script>
+<script>
+let autoGames = [];
+let manualGames = []; // keep your manual ones if you have them
+
+// 🔥 Load ALL .html files from repo, with pagination + games.json fallback
 async function loadRepoGames() {
   try {
     const repoUrl = "https://api.github.com/repos/Deformed-steve/Youtube-Playables.github.io/contents/assets";
@@ -116,7 +121,7 @@ async function loadRepoGames() {
       const res = await fetch(`${repoUrl}?per_page=100&page=${page}`);
       const files = await res.json();
 
-      if (files.length === 0 || files.message) {
+      if (!Array.isArray(files) || files.length === 0) {
         done = true;
       } else {
         allFiles = allFiles.concat(files);
@@ -124,53 +129,71 @@ async function loadRepoGames() {
       }
     }
 
-    autoGames = allFiles
-      .filter(f => f.name.endsWith(".html"))
-      .map(f => ({
-        name: f.name.replace(".html", ""),
-        url: `https://deformed-steve.github.io/Youtube-Playables.github.io/${f.path}`
+    // ✅ Check for local games.json first
+    let localGames = [];
+    try {
+      const localGamesRes = await fetch("games.json");
+      if (localGamesRes.ok) {
+        localGames = await localGamesRes.json();
+      }
+    } catch (e) {
+      console.warn("No local games.json found:", e);
+    }
+
+    // Build autoGames array
+    if (localGames.length > 0) {
+      autoGames = localGames.map(name => ({
+        name: name.replace(".html", ""),
+        url: `assets/${name}`
       }));
+    } else {
+      autoGames = allFiles
+        .filter(f => f.name.endsWith(".html"))
+        .map(f => ({
+          name: f.name.replace(".html", ""),
+          url: `https://deformed-steve.github.io/Youtube-Playables.github.io/${f.path}`
+        }));
+    }
 
   } catch (e) {
     console.warn("Auto game loading failed:", e);
   }
 }
 
+function showGames() {
+  const grid = document.getElementById("gameGrid");
+  grid.innerHTML = "";
+  [...manualGames, ...autoGames].forEach(g => {
+    const card = document.createElement("div");
+    card.className = "gameCard";
+    card.textContent = g.name;
+    card.onclick = () => playGame(g.url);
+    grid.appendChild(card);
+  });
+}
 
-    function showGames() {
-      const grid = document.getElementById("gameGrid");
-      grid.innerHTML = "";
-      [...manualGames, ...autoGames].forEach(g => {
-        const card = document.createElement("div");
-        card.className = "gameCard";
-        card.textContent = g.name;
-        card.onclick = () => playGame(g.url);
-        grid.appendChild(card);
-      });
-    }
+function playGame(url) {
+  document.getElementById("player").style.display = "flex";
+  document.getElementById("gameFrame").src = url;
+}
 
-    function playGame(url) {
-      document.getElementById("player").style.display = "flex";
-      document.getElementById("gameFrame").src = url;
-    }
+function closeGame() {
+  document.getElementById("gameFrame").src = "";
+  document.getElementById("player").style.display = "none";
+}
 
-    function closeGame() {
-      document.getElementById("gameFrame").src = "";
-      document.getElementById("player").style.display = "none";
-    }
+function goHome() {
+  closeGame();
+  showGames();
+}
 
-    function goHome() {
-      closeGame();
-      showGames();
-    }
+document.getElementById("closeBtn").addEventListener("click", closeGame);
 
-    document.getElementById("closeBtn").addEventListener("click", closeGame);
-
-    // initialize
-    (async () => {
-      await loadRepoGames();
-      showGames();
-    })();
-  </script>
+// initialize
+(async () => {
+  await loadRepoGames();
+  showGames();
+})();
+</script>
 </body>
 </html>
