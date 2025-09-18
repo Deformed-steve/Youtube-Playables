@@ -8,10 +8,9 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #6a0dad; /* purple */
+      background: #6a0dad;
       color: white;
     }
-
     header {
       padding: 15px 20px;
       font-size: 22px;
@@ -19,14 +18,22 @@
       background: rgba(0,0,0,0.3);
       cursor: pointer;
     }
-
+    #searchBar {
+      display: block;
+      margin: 10px auto 20px;
+      padding: 10px;
+      width: 90%;
+      max-width: 400px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: none;
+    }
     #gameGrid {
-      padding: 20px;
+      padding: 0 20px 20px;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 20px;
     }
-
     .gameCard {
       background: #222;
       padding: 40px 20px;
@@ -37,12 +44,10 @@
       cursor: pointer;
       transition: transform 0.2s, background 0.2s;
     }
-
     .gameCard:hover {
       transform: scale(1.08);
       background: #333;
     }
-
     #player {
       position: fixed;
       top: 0; left: 0;
@@ -51,14 +56,12 @@
       flex-direction: column;
       background: black;
     }
-
     #gameFrame {
       flex-grow: 1;
       width: 100%;
       height: 100%;
       border: none;
     }
-
     #closeBtn {
       position: absolute;
       top: 15px;
@@ -71,7 +74,6 @@
       border-radius: 6px;
       cursor: pointer;
     }
-
     #closeBtn:hover {
       background: white;
     }
@@ -79,6 +81,8 @@
 </head>
 <body>
   <header onclick="goHome()">YouTube Playables</header>
+  <input type="text" id="searchBar" placeholder="Search games..." />
+
   <main id="gameGrid"></main>
 
   <div id="player">
@@ -88,23 +92,23 @@
 
   <!-- Inline JSON with manually added games -->
   <script id="gamesData" type="application/json">
- [
-    {
-      "name": "OFF BRAND CLASH ROYALE",
-      "url": "https://html5.gamedistribution.com/rvvASMiM/7fb6eddc884e4a0380f40410134650a3/index.html?gdpr-targeting=0&gdpr-tracking=0&gdpr-third-party=0%2F%3Fgd_sdk_referrer_url%3Dhttps%3A%2F%2Fwww.topgames.com%2Fplay%2FClash-Royale-Online&gd_zone_config=eyJwYXJlbnRVUkwiOiJodHRwczovL3d3dy50b3BnYW1lcy5jb20vIiwicGFyZW50RG9tYWluIjoidG9wZ2FtZXMuY29tIiwidG9wRG9tYWluIjoidG9wZ2FtZXMuY29tIiwiaGFzSW1wcmVzc2lvbiI6dHJ1ZSwibG9hZGVyRW5hYmxlZCI6dHJ1ZSwiaG9zdCI6Imh0bWw1LmdhbWVkaXN0cmlidXRpb24uY29tIiwidmVyc2lvbiI6IjEuNS4xOCJ9"
-    },
-    {
-      "name": "Clash Royale Real",
-      "url": "https://www.easyfun.gg/embed/clash-royale-cloud-online.html?start=1"
-    }
-  ]
+[
+  {
+    "name": "OFF BRAND CLASH ROYALE",
+    "url": "https://html5.gamedistribution.com/rvvASMiM/7fb6eddc884e4a0380f40410134650a3/index.html"
+  },
+  {
+    "name": "Clash Royale Real",
+    "url": "https://www.easyfun.gg/embed/clash-royale-cloud-online.html?start=1"
+  }
+]
   </script>
 
-<script>
+  <script>
 let manualGames = JSON.parse(document.getElementById("gamesData").textContent);
 let autoGames = [];
 
-// 🔥 Load ALL games from local games.json (root folder) fast
+// 🔥 Load ALL games from local games.json (root folder)
 async function loadLocalGames() {
   try {
     const res = await fetch("games.json"); // root folder
@@ -113,17 +117,20 @@ async function loadLocalGames() {
 
     autoGames = files.map(name => ({
       name: name.replace(".html", ""),
-      url: name // root folder path
+      url: name // root folder
     }));
   } catch (e) {
     console.warn("Failed to load local games.json:", e);
   }
 }
 
-function showGames() {
+function showGames(filter = "") {
   const grid = document.getElementById("gameGrid");
   grid.innerHTML = "";
-  [...manualGames, ...autoGames].forEach(g => {
+  const allGames = [...manualGames, ...autoGames]
+    .filter(g => g.name.toLowerCase().includes(filter.toLowerCase()));
+
+  allGames.forEach(g => {
     const card = document.createElement("div");
     card.className = "gameCard";
     card.textContent = g.name;
@@ -149,12 +156,16 @@ function goHome() {
 
 document.getElementById("closeBtn").addEventListener("click", closeGame);
 
+// Search bar filtering
+document.getElementById("searchBar").addEventListener("input", (e) => {
+  showGames(e.target.value);
+});
+
 // initialize
 (async () => {
   await loadLocalGames();
   showGames();
 })();
-</script>
+  </script>
 </body>
 </html>
-
