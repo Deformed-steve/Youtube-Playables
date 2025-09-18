@@ -100,66 +100,23 @@
   ]
   </script>
 
- <script>
+<script>
 let manualGames = JSON.parse(document.getElementById("gamesData").textContent);
 let autoGames = [];
 
-// 🔥 Load ALL .html files from repo, with pagination + games.json fallback
-async function loadRepoGames() {
+// 🔥 Load ALL games from local games.json (fast)
+async function loadLocalGames() {
   try {
-    // GitHub API pagination
-    const repoUrl = "https://api.github.com/repos/Deformed-steve/Youtube-Playables.github.io/contents/assets";
-    let page = 1;
-    let allFiles = [];
-    let done = false;
+    const res = await fetch("assets/games.json");
+    if (!res.ok) throw new Error("games.json not found");
+    const files = await res.json();
 
-    while (!done) {
-      const res = await fetch(`${repoUrl}?per_page=100&page=${page}`, {
-        headers: { "Accept": "application/vnd.github.v3+json" }
-      });
-
-      if (!res.ok) {
-        console.warn("GitHub API error:", res.status, await res.text());
-        break;
-      }
-
-      const files = await res.json();
-      if (!Array.isArray(files) || files.length === 0) {
-        done = true;
-      } else {
-        allFiles = allFiles.concat(files);
-        page++;
-      }
-    }
-
-    // games.json fallback
-    let localGames = [];
-    try {
-      const localRes = await fetch("assets/games.json");
-      if (localRes.ok) {
-        localGames = await localRes.json();
-      }
-    } catch (e) {
-      console.warn("No local games.json found:", e);
-    }
-
-    // Build autoGames
-    if (localGames.length > 0) {
-      autoGames = localGames.map(name => ({
-        name: name.replace(".html", ""),
-        url: `assets/${name}`
-      }));
-    } else {
-      autoGames = allFiles
-        .filter(f => f.name.endsWith(".html"))
-        .map(f => ({
-          name: f.name.replace(".html", ""),
-          url: `https://deformed-steve.github.io/Youtube-Playables.github.io/assets/${f.name}`
-        }));
-    }
-
+    autoGames = files.map(name => ({
+      name: name.replace(".html", ""),
+      url: `assets/${name}`
+    }));
   } catch (e) {
-    console.warn("Auto game loading failed:", e);
+    console.warn("Failed to load local games.json:", e);
   }
 }
 
@@ -194,7 +151,7 @@ document.getElementById("closeBtn").addEventListener("click", closeGame);
 
 // initialize
 (async () => {
-  await loadRepoGames();
+  await loadLocalGames();
   showGames();
 })();
 </script>
