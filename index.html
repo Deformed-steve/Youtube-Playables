@@ -100,26 +100,14 @@
   ]
   </script>
 
-  <script>
-    let manualGames = JSON.parse(document.getElementById("gamesData").textContent);
-    let autoGames = [];
-
-<script>
+ <script>
+let manualGames = JSON.parse(document.getElementById("gamesData").textContent);
 let autoGames = [];
-let manualGames = [
-  {
-    "name": "OFF BRAND CLASH ROYALE",
-    "url": "https://html5.gamedistribution.com/rvvASMiM/7fb6eddc884e4a0380f40410134650a3/index.html"
-  },
-  {
-    "name": "Clash Royale Real",
-    "url": "https://www.easyfun.gg/embed/clash-royale-cloud-online.html?start=1"
-  }
-];
 
 // 🔥 Load ALL .html files from repo, with pagination + games.json fallback
 async function loadRepoGames() {
   try {
+    // GitHub API pagination
     const repoUrl = "https://api.github.com/repos/Deformed-steve/Youtube-Playables.github.io/contents/assets";
     let page = 1;
     let allFiles = [];
@@ -136,7 +124,6 @@ async function loadRepoGames() {
       }
 
       const files = await res.json();
-
       if (!Array.isArray(files) || files.length === 0) {
         done = true;
       } else {
@@ -145,18 +132,18 @@ async function loadRepoGames() {
       }
     }
 
-    // ✅ Check for local games.json first (optional)
+    // games.json fallback
     let localGames = [];
     try {
-      const localGamesRes = await fetch("assets/games.json");
-      if (localGamesRes.ok) {
-        localGames = await localGamesRes.json();
+      const localRes = await fetch("assets/games.json");
+      if (localRes.ok) {
+        localGames = await localRes.json();
       }
     } catch (e) {
       console.warn("No local games.json found:", e);
     }
 
-    // Build autoGames array
+    // Build autoGames
     if (localGames.length > 0) {
       autoGames = localGames.map(name => ({
         name: name.replace(".html", ""),
@@ -167,7 +154,7 @@ async function loadRepoGames() {
         .filter(f => f.name.endsWith(".html"))
         .map(f => ({
           name: f.name.replace(".html", ""),
-          url: `https://deformed-steve.github.io/Youtube-Playables.github.io/${f.path}`
+          url: `https://deformed-steve.github.io/Youtube-Playables.github.io/assets/${f.name}`
         }));
     }
 
