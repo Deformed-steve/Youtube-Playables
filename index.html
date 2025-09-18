@@ -129,16 +129,16 @@ async function loadRepoGames() {
       }
     }
 
-    // ✅ Check for local games.json first
-    let localGames = [];
-    try {
-      const localGamesRes = await fetch("games.json");
-      if (localGamesRes.ok) {
-        localGames = await localGamesRes.json();
-      }
-    } catch (e) {
-      console.warn("No local games.json found:", e);
-    }
+// ✅ Check for local games.json first (optional)
+let localGames = [];
+try {
+  const localGamesRes = await fetch("games.json");
+  if (localGamesRes.ok) {
+    localGames = await localGamesRes.json();
+  }
+} catch (e) {
+  // Ignore if missing, just use API
+}
 
     // Build autoGames array
     if (localGames.length > 0) {
