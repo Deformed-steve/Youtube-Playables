@@ -104,23 +104,38 @@
     let manualGames = JSON.parse(document.getElementById("gamesData").textContent);
     let autoGames = [];
 
-    // 🔥 Automatically load all .html files from this repo
-    async function loadRepoGames() {
-      try {
-        const repoUrl = "https://api.github.com/repos/Deformed-steve/Youtube-Playables.github.io/contents/assets"; 
-        const res = await fetch(repoUrl);
-        const files = await res.json();
+// 🔥 Load ALL .html files from the repo, handling GitHub API pagination
+async function loadRepoGames() {
+  try {
+    const repoUrl = "https://api.github.com/repos/Deformed-steve/Youtube-Playables.github.io/contents/assets";
+    let page = 1;
+    let allFiles = [];
+    let done = false;
 
-        autoGames = files
-          .filter(f => f.name.endsWith(".html"))
-          .map(f => ({
-            name: f.name.replace(".html", ""),
-            url: `https://deformed-steve.github.io/Youtube-Playables.github.io/${f.path}` // ✅ point to /assets/file.html
-          }));
-      } catch (e) {
-        console.warn("Auto game loading failed:", e);
+    while (!done) {
+      const res = await fetch(`${repoUrl}?per_page=100&page=${page}`);
+      const files = await res.json();
+
+      if (files.length === 0 || files.message) {
+        done = true;
+      } else {
+        allFiles = allFiles.concat(files);
+        page++;
       }
     }
+
+    autoGames = allFiles
+      .filter(f => f.name.endsWith(".html"))
+      .map(f => ({
+        name: f.name.replace(".html", ""),
+        url: `https://deformed-steve.github.io/Youtube-Playables.github.io/${f.path}`
+      }));
+
+  } catch (e) {
+    console.warn("Auto game loading failed:", e);
+  }
+}
+
 
     function showGames() {
       const grid = document.getElementById("gameGrid");
