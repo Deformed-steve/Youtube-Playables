@@ -109,6 +109,19 @@
 let autoGames = [];
 let manualGames = []; // keep your manual ones if you have them
 
+<script>
+let autoGames = [];
+let manualGames = [
+  {
+    "name": "OFF BRAND CLASH ROYALE",
+    "url": "https://html5.gamedistribution.com/rvvASMiM/7fb6eddc884e4a0380f40410134650a3/index.html"
+  },
+  {
+    "name": "Clash Royale Real",
+    "url": "https://www.easyfun.gg/embed/clash-royale-cloud-online.html?start=1"
+  }
+];
+
 // 🔥 Load ALL .html files from repo, with pagination + games.json fallback
 async function loadRepoGames() {
   try {
@@ -118,7 +131,15 @@ async function loadRepoGames() {
     let done = false;
 
     while (!done) {
-      const res = await fetch(`${repoUrl}?per_page=100&page=${page}`);
+      const res = await fetch(`${repoUrl}?per_page=100&page=${page}`, {
+        headers: { "Accept": "application/vnd.github.v3+json" }
+      });
+
+      if (!res.ok) {
+        console.warn("GitHub API error:", res.status, await res.text());
+        break;
+      }
+
       const files = await res.json();
 
       if (!Array.isArray(files) || files.length === 0) {
@@ -129,16 +150,16 @@ async function loadRepoGames() {
       }
     }
 
-// ✅ Check for local games.json first (optional)
-let localGames = [];
-try {
-  const localGamesRes = await fetch("games.json");
-  if (localGamesRes.ok) {
-    localGames = await localGamesRes.json();
-  }
-} catch (e) {
-  // Ignore if missing, just use API
-}
+    // ✅ Check for local games.json first (optional)
+    let localGames = [];
+    try {
+      const localGamesRes = await fetch("assets/games.json");
+      if (localGamesRes.ok) {
+        localGames = await localGamesRes.json();
+      }
+    } catch (e) {
+      console.warn("No local games.json found:", e);
+    }
 
     // Build autoGames array
     if (localGames.length > 0) {
@@ -197,3 +218,4 @@ document.getElementById("closeBtn").addEventListener("click", closeGame);
 </script>
 </body>
 </html>
+
